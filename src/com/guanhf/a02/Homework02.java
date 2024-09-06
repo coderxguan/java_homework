@@ -36,8 +36,8 @@ public class Homework02 {
             int tmp = (int)i;
             while(tmp != 0){
                 int digit = tmp % 10;
-                sum += Math.pow(digit, n);
-                tmp /= 10.0;
+                sum += (int)Math.pow(digit, n);
+                tmp /= 10;
             }
             if(sum == i ){
                 System.out.println(sum);
