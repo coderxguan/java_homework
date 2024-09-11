@@ -1,4 +1,4 @@
-package com.guanhf.a02;
+package com.guanhf.trail1;
 
 /*
 Daffodils Numbers are also known as super perfect number invariants,
@@ -23,28 +23,35 @@ Output sample:
 
 import java.util.Scanner;
 
-public class Homework02 {
+public class a07 {
     public static void main(String[] args) {
-
-        int n;
-        System.out.println("please input the digit numbers:");
         Scanner scanner = new Scanner(System.in);
-        n = scanner.nextInt();
+        int n = scanner.nextInt();
 
-        // 循环n位数
-        for(double i = Math.pow(10, n-1); i < Math.pow(10, n); i++){
+        // 预先计算 0 到 9 的 n 次方
+        int[] powers = new int[10];
+        for (int i = 0; i < 10; i++) {
+            powers[i] = (int) Math.pow(i, n);
+        }
+
+        // 计算 n 位数的范围
+        int start = (int) Math.pow(10, n - 1);
+        int end = (int) Math.pow(10, n);
+
+        // 循环 n 位数
+        for (int i = start; i < end; i++) {
             int sum = 0;
-            int tmp = (int)i;
+            int tmp = i;
             // 取每一位数
-            while(tmp != 0){
+            while (tmp != 0) {
                 int digit = tmp % 10;
-                sum += (int)Math.pow(digit, n);
+                sum += powers[digit];
                 tmp /= 10;
             }
-            if(sum == i ){
-                System.out.println(sum);
+            if (sum == i) {
+                System.out.println(i);
             }
         }
     }
-
 }
+
