@@ -1,6 +1,6 @@
 package com.guanhf.a04;
 
-public class Test1 {
+public class RectangleTest {
     public static void main(String[] args) {
 
         Rectangle r1 = new Rectangle();
