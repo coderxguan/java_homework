@@ -45,13 +45,5 @@ public class Customer {
         this.savingAccount = savingAccount;
     }
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "ssn='" + ssn + '\'' +
-                ", name='" + name + '\'' +
-                ", checkingAccount=" + checkingAccount +
-                ", savingAccount=" + savingAccount +
-                '}';
-    }
+
 }

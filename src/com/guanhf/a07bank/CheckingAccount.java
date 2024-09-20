@@ -16,4 +16,9 @@ public class CheckingAccount extends BankAccount{
     public void setServiceCharge(double serviceCharge) {
         this.serviceCharge = serviceCharge;
     }
+
+    public void settleAccount() {
+        setBalance(getBalance() - serviceCharge);
+    }
+
 }
