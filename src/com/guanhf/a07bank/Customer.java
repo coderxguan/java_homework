@@ -6,6 +6,8 @@ public class Customer {
     private CheckingAccount checkingAccount;
     private SavingAccount savingAccount;
 
+    public Customer() {}
+
     public Customer(String ssn, String name, CheckingAccount checkingAccount, SavingAccount savingAccount) {
         this.ssn = ssn;
         this.name = name;

@@ -4,6 +4,8 @@ package com.guanhf.a07bank;
 import java.util.Scanner;
 
 public class BankingApp {
+    // 全局变量, 一个用户
+    private static Customer customer = new Customer();
 
     public static void main(String[] args) {
         run();
@@ -12,7 +14,7 @@ public class BankingApp {
     // 主程序运行方法，显示主菜单并处理用户输入
     public static void run() {
         Scanner scanner = new Scanner(System.in);
-        Customer customer = null; // customer 是实例变量，不是静态的
+
         boolean exit = false;
 
         System.out.println("欢迎使用银行系统");
@@ -32,25 +34,25 @@ public class BankingApp {
 
             switch (choice) {
                 case 1:
-                    customer = createAccount();
+                    createAccount();
                     break;
                 case 2:
-                    save(customer);
+                    save();
                     break;
                 case 3:
-                    withdraw(customer);
+                    withdraw();
                     break;
                 case 4:
-                    consume(customer);
+                    consume();
                     break;
                 case 5:
-                    repay(customer);
+                    repay();
                     break;
                 case 6:
-                    settle(customer);
+                    settle();
                     break;
                 case 7:
-                    checkBalance(customer);
+                    checkBalance();
                     break;
                 case 8:
                     exit = true;
@@ -65,7 +67,7 @@ public class BankingApp {
     }
 
     // 1. 开户功能：选择账户类型并创建新账户
-    public static Customer createAccount() {
+    public static void createAccount() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("请选择开卡类型");
@@ -75,7 +77,7 @@ public class BankingApp {
         System.out.print("请选择（1-3）: ");
 
         int choice = scanner.nextInt();
-        Customer customer = null;
+
 
         switch (choice) {
             case 1:
@@ -87,9 +89,10 @@ public class BankingApp {
                 String accountNumber = scanner.next();
                 System.out.print("请输入服务费: ");
                 double serviceCharge = scanner.nextDouble();
-
+                customer.setSsn(ssn);
+                customer.setName(name);
                 CheckingAccount checkingAccount = new CheckingAccount(accountNumber, 0, serviceCharge);
-                customer = new Customer(ssn, name, checkingAccount, null);
+                customer.setCheckingAccount(checkingAccount);
                 System.out.println("信用卡账户创建成功！");
                 break;
 
@@ -102,9 +105,10 @@ public class BankingApp {
                 accountNumber = scanner.next();
                 System.out.print("请输入利率: ");
                 double interestRate = scanner.nextDouble();
-
+                customer.setSsn(ssn);
+                customer.setName(name);
                 SavingAccount savingAccount = new SavingAccount(accountNumber, 0, interestRate);
-                customer = new Customer(ssn, name, null, savingAccount);
+                customer.setSavingAccount(savingAccount);
                 System.out.println("存储卡账户创建成功！");
                 break;
 
@@ -115,51 +119,29 @@ public class BankingApp {
             default:
                 System.out.println("无效选择，请重新选择！");
         }
-
-        return customer;
     }
 
-    // 2. 存款功能
-    public static void save(Customer customer) {
+    // 2. 存款功能 存款到存储卡
+    public static void save() {
         if (customer == null) {
             System.out.println("请先创建账户！");
             return;
         }
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("请选择存款账户类型");
-        System.out.println("1. 信用卡 checkingAccount");
-        System.out.println("2. 存储卡 savingAccount");
-        System.out.print("请选择（1-2）: ");
-        int choice = scanner.nextInt();
-
-        System.out.print("请输入存款金额: ");
-        double amount = scanner.nextDouble();
-
-        switch (choice) {
-            case 1:
-                if (customer.getCheckingAccount() != null) {
-                    customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() + amount);
-                    System.out.println("存款成功！当前信用卡余额: " + customer.getCheckingAccount().getBalance());
-                } else {
-                    System.out.println("信用卡账户不存在！");
-                }
-                break;
-            case 2:
-                if (customer.getSavingAccount() != null) {
-                    customer.getSavingAccount().setBalance(customer.getSavingAccount().getBalance() + amount);
-                    System.out.println("存款成功！当前存储卡余额: " + customer.getSavingAccount().getBalance());
-                } else {
-                    System.out.println("存储卡账户不存在！");
-                }
-                break;
-            default:
-                System.out.println("无效选择，请重新选择！");
+        if (customer.getSavingAccount() != null) {
+            System.out.print("请输入存款金额: ");
+            double amount = scanner.nextDouble();
+            customer.getSavingAccount().setBalance(customer.getSavingAccount().getBalance() + amount);
+            System.out.println("存款成功！当前存储卡余额: " + customer.getSavingAccount().getBalance());
+        } else {
+            System.out.println("存储卡账户不存在！请先创建存储卡");
         }
     }
 
-    // 3. 取款功能
-    public static void withdraw(Customer customer) {
+
+    // 3. 取款功能 两张卡都能取款
+    public static void withdraw() {
         if (customer == null) {
             System.out.println("请先创建账户！");
             return;
@@ -177,18 +159,16 @@ public class BankingApp {
 
         switch (choice) {
             case 1:
+                // 信用卡取款
                 if (customer.getCheckingAccount() != null) {
-                    if (customer.getCheckingAccount().getBalance() >= amount) {
-                        customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() - amount);
-                        System.out.println("取款成功！当前信用卡余额: " + customer.getCheckingAccount().getBalance());
-                    } else {
-                        System.out.println("信用卡余额不足！");
-                    }
+                    customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() + amount);
+                    System.out.println("取款成功！当前信用卡待还款金额: " + customer.getCheckingAccount().getBalance());
                 } else {
                     System.out.println("信用卡账户不存在！");
                 }
                 break;
             case 2:
+                // 存储卡取款
                 if (customer.getSavingAccount() != null) {
                     if (customer.getSavingAccount().getBalance() >= amount) {
                         customer.getSavingAccount().setBalance(customer.getSavingAccount().getBalance() - amount);
@@ -206,7 +186,7 @@ public class BankingApp {
     }
 
     // 4. 消费功能
-    public static void consume(Customer customer) {
+    public static void consume() {
         if (customer == null || customer.getCheckingAccount() == null) {
             System.out.println("请先创建信用卡账户！");
             return;
@@ -225,14 +205,12 @@ public class BankingApp {
 
         switch (choice) {
             case 1:
-                if (customer.getCheckingAccount().getBalance() >= amount) {
-                    customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() - amount);
-                    System.out.println("消费成功！当前信用卡余额: " + customer.getCheckingAccount().getBalance());
-                } else {
-                    System.out.println("信用卡余额不足！");
-                }
+                // 信用卡消费
+                customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() + amount);
+                System.out.println("消费成功！当前待还款金额: " + customer.getCheckingAccount().getBalance());
                 break;
             case 2:
+                // 存储卡消费
                 if (customer.getSavingAccount().getBalance() >= amount) {
                     customer.getSavingAccount().setBalance(customer.getSavingAccount().getBalance() - amount);
                     System.out.println("消费成功！当前存储卡余额: " + customer.getSavingAccount().getBalance());
@@ -246,24 +224,24 @@ public class BankingApp {
     }
 
     // 5. 还款功能
-    public static void repay(Customer customer) {
+    public static void repay() {
         // 针对信用卡的还款功能
         if (customer == null || customer.getCheckingAccount() == null) {
             System.out.println("请先创建信用卡账户！");
             return;
         }
-
+        System.out.println("当前待还款金额为: " + customer.getCheckingAccount().getBalance());
         Scanner scanner = new Scanner(System.in);
         System.out.print("请输入还款金额: ");
         double amount = scanner.nextDouble();
 
-        customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() + amount);
-        System.out.println("还款成功！当前余额: " + customer.getCheckingAccount().getBalance());
+        customer.getCheckingAccount().setBalance(customer.getCheckingAccount().getBalance() - amount);
+        System.out.println("还款成功！当前待还款金额: " + customer.getCheckingAccount().getBalance());
 
     }
 
     // 6. 银行结算功能
-    public static void settle(Customer customer) {
+    public static void settle() {
         if (customer == null) {
             System.out.println("请先创建账户！");
             return;
@@ -279,15 +257,16 @@ public class BankingApp {
     }
 
     // 7. 查询余额功能
-    public static void checkBalance(Customer customer) {
+    public static void checkBalance() {
         if (customer == null) {
             System.out.println("请先创建账户！");
             return;
         }
 
         if (customer.getCheckingAccount() != null) {
-            System.out.println("信用卡余额: " + customer.getCheckingAccount().getBalance());
-        } else if (customer.getSavingAccount() != null) {
+            System.out.println("信用卡欠款: " + customer.getCheckingAccount().getBalance());
+        }
+        if (customer.getSavingAccount() != null) {
             System.out.println("存储卡余额: " + customer.getSavingAccount().getBalance());
         }
     }

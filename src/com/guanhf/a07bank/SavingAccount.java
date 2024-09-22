@@ -16,6 +16,7 @@ public class SavingAccount extends BankAccount{
         this.interestRate = interestRate;
     }
 
+    // 结算利息
     public void accrueInterest() {
         setBalance(getBalance() * (1 + interestRate));
     }
