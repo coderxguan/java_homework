@@ -26,6 +26,9 @@ public class Test1 {
         String sql = "select * from student";
         PreparedStatement pst = conn.prepareStatement(sql);
 
+
+
+        // test
         ResultSet rs = pst.executeQuery();
 
 //        int i = pst.executeUpdate();
