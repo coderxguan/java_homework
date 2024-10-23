@@ -14,7 +14,20 @@ import static java.lang.System.exit;
 public class App {
     public static final Scanner sc = new Scanner(System.in);
     public static void main(String[] args) throws SQLException {
-        while (true){
+        while(true) {
+            boolean login = login();
+            if (login) {
+                program();
+                break;
+            }else {
+                System.out.println("username or password is incorrect!!!");
+            }
+        }
+    }
+
+    // 分支执行
+    public static void program() throws SQLException {
+        while (true) {
             int choice = menu();
             switch (choice) {
                 case 1:
@@ -33,6 +46,9 @@ public class App {
                     statisticsStudent();
                     break;
                 case 6:
+                    modifyPassword();
+                    break;
+                case 7:
                     System.out.println("exit successfully");
                     exit(0);
                     break;
@@ -51,6 +67,21 @@ public class App {
         return DriverManager.getConnection(url, username, password);
     }
 
+    // 用户登陆
+    public static boolean login() throws SQLException {
+        Connection connection = getConnection();
+        String username = sc.nextLine();
+        String password = sc.nextLine();
+
+        return true;
+    }
+
+    // 修改密码
+    public static void modifyPassword() throws SQLException {
+        Connection connection = getConnection();
+
+    }
+
     // 打印菜单
     public static int menu(){
         System.out.println("Student Management System V1.0");
@@ -59,7 +90,8 @@ public class App {
         System.out.println("3. Modify Student");
         System.out.println("4. Delete Student");
         System.out.println("5. Statistic Student");
-        System.out.println("6. Exit");
+        System.out.println("6. Modify Password");
+        System.out.println("7. Exit");
         System.out.print("Please Enter your choice: ");
         Scanner sc = new Scanner(System.in);
         return sc.nextInt();
