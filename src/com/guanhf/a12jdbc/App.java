@@ -15,9 +15,10 @@ public class App {
     public static final Scanner sc = new Scanner(System.in);
     public static void main(String[] args) throws SQLException {
         while(true) {
-            boolean login = login();
-            if (login) {
-                program();
+            String username = login();
+            if (username!=null) {
+                program(username);
+                System.out.println("login success!!!");
                 break;
             }else {
                 System.out.println("username or password is incorrect!!!");
@@ -26,9 +27,9 @@ public class App {
     }
 
     // 分支执行
-    public static void program() throws SQLException {
+    public static void program(String username) throws SQLException {
         while (true) {
-            int choice = menu();
+            int choice = menu(username);
             switch (choice) {
                 case 1:
                     addStudent();
@@ -46,7 +47,7 @@ public class App {
                     statisticsStudent();
                     break;
                 case 6:
-                    modifyPassword();
+                    modifyPassword(username);
                     break;
                 case 7:
                     System.out.println("exit successfully");
@@ -68,23 +69,50 @@ public class App {
     }
 
     // 用户登陆
-    public static boolean login() throws SQLException {
+    public static String  login() throws SQLException {
         Connection connection = getConnection();
+        System.out.println("please enter your username: ");
         String username = sc.nextLine();
+        System.out.println("please enter your password: ");
         String password = sc.nextLine();
 
-        return true;
+        // 验证用户
+        String sql = "select * from user where username = ? and password = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, username);
+        ps.setString(2, password);
+        ResultSet rs = ps.executeQuery();
+
+        if(rs.next()) {
+            return rs.getString("username");
+        }else{
+            return null;
+        }
     }
 
     // 修改密码
-    public static void modifyPassword() throws SQLException {
+    public static void modifyPassword(String username) throws SQLException {
         Connection connection = getConnection();
+        System.out.println("please enter your new password: ");
+        String password = sc.nextLine();
+        String sql = "update user set password = ? where username = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, password);
+        ps.setString(2, username);
+        int i = ps.executeUpdate();
+        if (i > 0) {
+            System.out.println("password modified successfully");
+        }else{
+            System.out.println("password modification failed");
+        }
+
 
     }
 
     // 打印菜单
-    public static int menu(){
-        System.out.println("Student Management System V1.0");
+    public static int menu(String username) {
+        System.out.println("Student Management System V2.0");
+        System.out.println("Current User: " + username);
         System.out.println("1. Add Student");
         System.out.println("2. Query Student");
         System.out.println("3. Modify Student");
